@@ -274,7 +274,7 @@ main:focus {
 .steps {
   display: flex;
   list-style: none;
-  margin: 38px 0 42px;
+  margin: 38px 0 36px;
   padding: 0 18px;
 }
 .steps li {
@@ -359,7 +359,7 @@ main:focus {
   gap: 22px;
   border: 1.5px solid #dce1e8;
   border-radius: 11px;
-  padding: 24px 23px;
+  padding: 20px 23px;
   min-height: 123px;
   cursor: pointer;
   transition:
@@ -372,7 +372,7 @@ main:focus {
 }
 .method.selected {
   border: 2px solid var(--blue);
-  padding: 23.5px 22.5px;
+  padding: 19.5px 22.5px;
   background: #eaf2ff;
 }
 .method input {
@@ -392,7 +392,7 @@ main:focus {
 .method small {
   font-size: 17px;
   color: var(--muted);
-  line-height: 1.55;
+  line-height: 1.45;
   display: block;
   max-width: 470px;
 }
@@ -458,7 +458,7 @@ main:focus {
   padding: 33px 30px;
   display: flex;
   flex-direction: column;
-  min-height: 875px;
+  min-height: 900px;
 }
 .context-panel > h2 {
   font-size: 24px;

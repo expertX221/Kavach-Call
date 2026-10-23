@@ -138,6 +138,19 @@ export function App() {
     [text, confidence, noisy, mixed],
   );
   const dismissed = dismissedAt === text;
+  const hasUrgentPayment =
+    result.signals.some((s) => s.id === "urgency") &&
+    result.signals.some((s) => s.id === "money");
+  const contextSignals = hasUrgentPayment
+    ? [
+        {
+          id: "urgent-payment",
+          title: "Urgent money request",
+          detail: "Caller is asking for an immediate transfer of money.",
+        },
+        ...result.signals.filter((s) => !["urgency", "money"].includes(s.id)),
+      ]
+    : result.signals;
   const speech = useSpeech((line, c) => {
     setText((prev) => (prev + "\n" + line).trim().slice(-12000));
     setConfidence((prev) => Math.min(prev, c));
@@ -612,7 +625,7 @@ export function App() {
                 <div className="context-section">
                   <h3>Security indicators</h3>
                   {result.signals.length ? (
-                    result.signals.slice(0, 3).map((s) => (
+                    contextSignals.slice(0, 3).map((s) => (
                       <div className="indicator" key={s.id}>
                         <Warning size={30} />
                         <div>
@@ -637,7 +650,9 @@ export function App() {
                       : "Transcript excerpt"}
                   </h3>
                   <blockquote>
-                    “{redact(text).slice(0, 180) || "Waiting for a transcript…"}
+                    “
+                    {redact(text.split("\n")[0]).slice(0, 180) ||
+                      "Waiting for a transcript…"}
                     ”
                   </blockquote>
                   <button
@@ -1187,14 +1202,16 @@ export function App() {
             </div>
           )}
         </main>
-        <footer className="app-footer">
-          <span>
-            <ShieldCheck size={16} /> Warn. Verify. Stay in control.
-          </span>
-          <button onClick={() => setModal("help")}>
-            Prototype limits & privacy <ArrowUpRight size={14} />
-          </button>
-        </footer>
+        {page !== "verify" && (
+          <footer className="app-footer">
+            <span>
+              <ShieldCheck size={16} /> Warn. Verify. Stay in control.
+            </span>
+            <button onClick={() => setModal("help")}>
+              Prototype limits & privacy <ArrowUpRight size={14} />
+            </button>
+          </footer>
+        )}
       </div>
       {toast && (
         <div className="toast" role="status">
