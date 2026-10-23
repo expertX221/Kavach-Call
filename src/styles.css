@@ -1965,3 +1965,30 @@ textarea:disabled {
     scroll-behavior: auto !important;
   }
 }
+
+/* Match the selected desktop reference without reducing touch targets. */
+@media (min-width: 1251px) {
+  .verification-layout {
+    margin-right: -24px;
+  }
+  .method {
+    gap: 46px;
+  }
+  .method input {
+    width: 30px;
+    height: 30px;
+  }
+  .context-panel {
+    padding: 33px 36px;
+  }
+  .indicator {
+    gap: 28px;
+  }
+  .indicator strong {
+    font-size: 20px;
+  }
+  .indicator p {
+    font-size: 18px;
+    line-height: 1.5;
+  }
+}
