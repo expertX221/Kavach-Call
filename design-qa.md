@@ -62,3 +62,7 @@ Evidence: outputs/kavach-weekly-digest.png, outputs/kavach-protection-score.png 
 
 ## Production follow-up
 PR #1 is merged into main. Production app https://kavach-call.vercel.app/ is public and renders the selected UI. Neon production schema is prepared; its empty reviewed digest connected successfully. In-app-browser image chooser completed the generated payment QR upload end to end, showing demo@upi and INR 125. Evidence: docs/evidence/kavach-qr-production.png. This supersedes the earlier browser-upload limitation. Live camera remains dependent on device/browser permission; lifecycle denial, stalled-start timeout and late-stream cleanup are covered by automated tests.
+
+
+## Final physical camera verification
+After the user explicitly allowed camera access and positioned the known demo QR, production Chrome received 640x480 live frames, decoded `upi://pay?pa=demo@upi&pn=Practice%20Only&am=125&cu=INR`, displayed demo@upi / Practice Only / INR 125, and automatically stopped the camera. No payment was initiated. This supersedes the earlier pending physical-camera limitation. Screenshot after automatic shutdown: docs/evidence/kavach-camera-verified.png. The supplied arbitrary first QR was not decoded; the known valid test image succeeded.

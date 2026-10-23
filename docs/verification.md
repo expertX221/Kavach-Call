@@ -26,3 +26,7 @@ Tests verify the specified examples and interactions, not real-world scam accura
 
 ## Production release
 PR #1 merged into main at 4ac2eeb4562f2d6fbae9321d55d0f98c6612ec8e. Vercel reported a successful production deployment. Public app: https://kavach-call.vercel.app/ . Additive migration applied to the production Neon branch. Production weekly digest connected successfully and displayed the empty reviewed-data state. No sample scam reports were inserted.
+
+
+## Final physical camera verification
+After the user explicitly allowed camera access and positioned the known demo QR, production Chrome received 640x480 live frames, decoded `upi://pay?pa=demo@upi&pn=Practice%20Only&am=125&cu=INR`, displayed demo@upi / Practice Only / INR 125, and automatically stopped the camera. No payment was initiated. This supersedes the earlier pending physical-camera limitation. Screenshot after automatic shutdown: docs/evidence/kavach-camera-verified.png. The supplied arbitrary first QR was not decoded; the known valid test image succeeded.
