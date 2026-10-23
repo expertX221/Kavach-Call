@@ -1,4 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { QrCode } from "@phosphor-icons/react/dist/csr/QrCode";
+import { Newspaper } from "@phosphor-icons/react/dist/csr/Newspaper";
+import FamilyProtection from "./features/FamilyProtection.jsx";
+import { useIntelligence } from "./lib/useIntelligence.js";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { ShieldCheck } from "@phosphor-icons/react/dist/csr/ShieldCheck";
 import { House } from "@phosphor-icons/react/dist/csr/House";
 import { Phone } from "@phosphor-icons/react/dist/csr/Phone";
@@ -51,6 +55,9 @@ import {
   OfficialHelp,
 } from "./components.jsx";
 
+const LinksPage = lazy(() => import("./features/LinksPage.jsx"));
+const DigestPage = lazy(() => import("./features/DigestPage.jsx"));
+
 const methods = [
   {
     id: "family",
@@ -74,6 +81,8 @@ const methods = [
   },
 ];
 const navigation = [
+  { id: "links", label: "Links & QR", icon: QrCode },
+  { id: "digest", label: "Weekly digest", icon: Newspaper },
   { id: "verify", label: "Verify caller", icon: House },
   { id: "guard", label: "Call guard", icon: Phone },
   { id: "family", label: "Family circle", icon: Users },
@@ -89,6 +98,43 @@ const defaultSettings = {
 
 export function App() {
   const [page, setPage] = useState("verify");
+  const intelligence = useIntelligence(page === "links" || page === "digest");
+  const [progress, setProgress] = useState(() => {
+    const p = readLocal("progress", []);
+    return Array.isArray(p)
+      ? p
+          .filter(
+            (x) =>
+              x &&
+              typeof x.scenarioId === "string" &&
+              typeof x.completedAt === "string",
+          )
+          .slice(0, 30)
+      : [];
+  });
+  const [plan, setPlan] = useState(() => ({
+    callbackPlan: readLocal("plan", {})?.callbackPlan === true,
+  }));
+  function updatePlan(next) {
+    setPlan(next);
+    if (!writeLocal("plan", next))
+      setToast(
+        "Setup changed for this visit only; browser storage unavailable.",
+      );
+  }
+  function completePractice(id) {
+    setAnswer(id);
+    if (!quiz || id !== quiz.expected) return;
+    const next = [
+      ...progress.filter((p) => p.scenarioId !== playId),
+      { scenarioId: playId, completedAt: new Date().toISOString() },
+    ];
+    setProgress(next);
+    if (!writeLocal("progress", next))
+      setToast(
+        "Practice progress lasts for this visit only; browser storage unavailable.",
+      );
+  }
   const [text, setText] = useState(initialTranscript);
   const [confidence, setConfidence] = useState(1);
   const [noisy, setNoisy] = useState(false);
@@ -367,6 +413,21 @@ export function App() {
           </div>
         </header>
         <main id="main" tabIndex={-1}>
+          <Suspense fallback={<Notice>Loading protection tools…</Notice>}>
+            {page === "links" && <LinksPage intelligence={intelligence} />}
+            {page === "digest" && (
+              <DigestPage
+                reports={reports}
+                intelligence={intelligence}
+                onReports={() => setPage("reports")}
+                onPractice={(id) =>
+                  startScenario(
+                    scenarios.find((s) => s.id === id) || scenarios[0],
+                  )
+                }
+              />
+            )}
+          </Suspense>
           {page === "verify" && (
             <div className="verification-layout">
               <section
@@ -882,7 +943,7 @@ export function App() {
                       <Button
                         key={id}
                         secondary={answer !== id}
-                        onClick={() => setAnswer(id)}
+                        onClick={() => completePractice(id)}
                       >
                         {label}
                       </Button>
@@ -957,6 +1018,14 @@ export function App() {
                 them. No automatic SMS, Telegram message, or notification is
                 sent by this prototype.
               </Notice>
+              <FamilyProtection
+                contacts={contacts}
+                progress={progress}
+                plan={plan}
+                onPlan={updatePlan}
+                onPractice={() => setPage("practice")}
+                onAdd={() => setModal("contact")}
+              />
               {contacts.length ? (
                 <div className="contact-grid">
                   {contacts.map((c) => (
@@ -1318,6 +1387,8 @@ export function App() {
               if (clearLocal()) {
                 setContacts([]);
                 setReports([]);
+                setProgress([]);
+                setPlan({ callbackPlan: false });
                 setSettings(defaultSettings);
                 resetSession({ demo: true, transcript: initialTranscript });
                 notify("Local Kavach data deleted.");

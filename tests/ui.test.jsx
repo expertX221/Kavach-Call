@@ -1,5 +1,5 @@
 import React from "react";
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent, within } from "@testing-library/react";
 import { App } from "../src/App.jsx";
 
@@ -122,5 +122,60 @@ describe("caller verification and privacy", () => {
     const saved = JSON.parse(localStorage.getItem("kavach:contacts"));
     expect(saved[0].question).toBe("What game did we play together?");
     expect(saved[0]).not.toHaveProperty("answer");
+  });
+});
+
+describe("protection extensions", () => {
+  it("updates local family readiness when a callback plan is agreed", () => {
+    render(<App />);
+    fireEvent.click(
+      screen.getByRole("button", { name: "Family circle", exact: true }),
+    );
+    const score = screen.getByRole("progressbar", {
+      name: "Family protection setup score",
+    });
+    expect(score).toHaveAttribute("value", "0");
+    fireEvent.click(screen.getByLabelText(/We agreed to end unusual/));
+    expect(score).toHaveAttribute("value", "25");
+    expect(JSON.parse(localStorage.getItem("kavach:plan")).callbackPlan).toBe(
+      true,
+    );
+  });
+  it("checks a pasted link while community data is unavailable", async () => {
+    vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
+    render(<App />);
+    fireEvent.click(
+      screen.getByRole("button", { name: "Links & QR", exact: true }),
+    );
+    fireEvent.change(await screen.findByLabelText("Link or QR content"), {
+      target: { value: "https://google.com@evil.test" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /Check content/ }));
+    expect(screen.getByText("evil.test")).toBeInTheDocument();
+    expect(screen.getByText("Misleading address prefix")).toBeInTheDocument();
+  });
+  it("keeps editorial explainers and practice counts separate from regional data", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        status: "connected",
+        reputation: [],
+        campaigns: [],
+        campaignTotals: { Chennai: 0, India: 0 },
+      }),
+    });
+    render(<App />);
+    fireEvent.click(
+      screen.getByRole("button", { name: "Weekly digest", exact: true }),
+    );
+    expect(
+      await screen.findByText(/No reviewed Chennai campaigns/),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Practice drafts are excluded/),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("tablist", { name: "Scam explainers" }),
+    ).toBeInTheDocument();
   });
 });

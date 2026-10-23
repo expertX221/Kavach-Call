@@ -27,3 +27,7 @@ Automatic trusted-contact messages require verified recipients, explicit opt-in,
 A real clone detector needs trained weights, telephony-degraded evaluation data, calibrated output, consent and per-language/accent benchmarks. An arbitrary synthetic percentage would mislead users; this demo instead says voice authenticity was not analyzed.
 
 Broader scam classification needs labeled normal and scam conversations, adversarial evaluation, acceptable false-positive thresholds, update/version management and low-confidence handling. Existing unit tests verify specified examples only and do not measure real-world accuracy.
+
+
+## Intelligence extension
+Vercel GET /api/intelligence reads only reviewed `kavach.campaigns` and `kavach.reputation` metadata from Neon. No audio, contact, family question or raw link payload is sent to this database. Optional ?host= performs a bounded registration lookup via IANA bootstrap, never the submitted website. Queries are parameterized, read-only, capped and time-limited. Empty feeds and outages have separate states. The browser service worker excludes API traffic. See README for schema and environment setup; all credentials remain server-side. The legacy Sites static worker serves the core UI only; these live endpoints require Vercel.

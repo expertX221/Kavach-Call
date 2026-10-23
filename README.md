@@ -30,7 +30,7 @@ Start with the selected white/charcoal/blue verification screen. A simulated fam
 
 The detection engine is transparent, hand-written demonstration rules. Its score is **not a calibrated probability** or measured accuracy. Hindi and Tamil are illustrative pattern coverage, not complete multilingual support. Context and negation handling remain limited.
 
-This web prototype does not intercept phone calls, end calls, detect cloned voices, measure noise, identify speakers, perform reputation lookups, send automatic family alerts, or file official reports. Those are production integrations and evaluation work. The interface labels these limitations.
+This web prototype does not intercept phone calls, end calls, detect cloned voices, measure noise, identify speakers, send automatic family alerts, or file official reports. Those are production integrations and evaluation work. The interface labels these limitations.
 
 Do not enter real passwords, PINs, OTPs, or banking details. Automatic redaction is incomplete: users must remove names, addresses and other identifiers before exporting. Local browser storage is not encrypted or synchronized and is accessible to people using that browser profile.
 
@@ -38,7 +38,13 @@ Do not enter real passwords, PINs, OTPs, or banking details. Automatic redaction
 
 The existing Vercel project should import this repository with its root set to the repository root. `vercel.json` selects Vite, runs `npm run build`, and publishes `dist/client`. Git-connected branches produce preview deployments when enabled in the project's settings.
 
-No API key, database or account login is needed for this demo. The connected Neon project is intentionally unused: conversations and contacts should not be uploaded merely to demonstrate a database. A production service could store consented, authenticated report metadata separately; see `docs/architecture.md`.
+Core call analysis, family setup and QR decoding work locally without an account. The Vercel `/api/intelligence` function reads reviewed campaign and hostname metadata from Neon using server-only `DATABASE_URL` (or `POSTGRES_URL`). Apply `database/migrations/001_intelligence.sql` to the connected preview branch. No sample campaigns or reputation entries are seeded. Missing configuration/data is shown honestly. Never expose database credentials through a VITE_ variable.
+
+Links & QR supports pasted links, uploaded PNG/JPEG/WebP QR images and an explicitly started camera. It detects limited brand lookalikes, HTTP, hidden userinfo, exact known shorteners, IP addresses and reviewed hostname matches (up to 500 latest records). It never visits a supplied destination or initiates a payment. Optional registration-age lookup sends only the hostname to the app server and the public registry selected through IANA RDAP bootstrap. Missing registry data yields no age conclusion. No full URL, QR image or camera frame is uploaded.
+
+Family protection score awards 25 points each for a saved contact, family question, correctly completed practice response, and agreed callback plan. It measures setup, never a probability of safety. Progress and the callback plan persist locally and are removed by Delete local data.
+
+Weekly digest uses Monday–Sunday IST and excludes future/unreviewed community records. Personal report drafts are shown separately and practice reports are excluded. The database currently starts empty; no regional claim is invented. Scam-of-the-week cards are editorial learning material that rotates weekly, separate from live report trends. There is no public report submission/admin interface; a maintainer must review evidence before inserting records.
 
 ## Project map
 
