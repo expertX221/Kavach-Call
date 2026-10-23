@@ -1,0 +1,50 @@
+# Design QA — Kavach Call
+
+final result: passed
+
+## Evidence and comparison target
+
+Selected visual truth: `docs/evidence/selected-reference.png` (the third displayed generated design, Clearline).
+
+Rendered implementation: Vercel preview `https://kavach-call-git-codex-kavach-prototype-create-projects1.vercel.app/` using the existing authenticated Chrome profile. The preview is protected by Vercel login. The in-app browser was unauthenticated; protection was retained.
+
+Desktop capture: `docs/evidence/kavach-call-preview.png`, 1487 × 1058 pixels, CSS viewport 1487 × 1058, capture density 1. Source is also 1487 × 1058; no scaling or browser/device chrome is included. Initial full-page capture was 1472 × 1184 due to overflow and was superseded after fixes.
+
+State: default Demo session, family question selected, Verify stage, elevated risk from the preloaded simulated family conversation. Full-view side-by-side: `docs/evidence/design-comparison.png`. Focused radio-card/type/spacing comparison: `docs/evidence/design-focus.png`.
+
+Mobile capture: `docs/evidence/kavach-call-mobile.png`, 390 × 844 pixels, CSS viewport 390 × 844, density 1. Desktop design was adapted to one column and bottom navigation because the source has no mobile reference. DOM document width equals viewport width: 390px. Content continues vertically with scroll. High-risk dialog at the same viewport: `docs/evidence/kavach-call-mobile-alert.png`.
+
+## Findings and iteration history
+
+1. **P2 — Excess vertical density on first render.** An extra urgency evidence row and a global footer stretched the screen past the selected design. Combined urgency and payment into the same summary, retained full signals in Call guard, tightened card padding and step spacing, and removed the extra footer from the verification screen. Recaptured at the source dimensions.
+2. **P2 — Desktop card-control inset and context typography.** Increased radio target size and card column gaps, aligned the context panel's right edge, and increased context evidence type. Recaptured and compared full-view plus focused regions. No remaining actionable P0/P1/P2 findings.
+3. **P3 — Small icon/style differences.** Library chat and bank icons differ slightly from the generated mock. Native radio rendering and Inter font rasterization also differ. The structure, blue/white/charcoal direction, hierarchy, selected state and content remain aligned. No imitation raster UI or handcrafted icons were used.
+
+## Required fidelity surfaces
+
+- **Fonts/typography:** bundled Inter Variable; strong title and section hierarchy, readable body text, appropriate wrapping and no clipped primary labels. A small difference in generated-mock font shape is accepted as P3.
+- **Spacing/layout:** charcoal rail, header, left verification stack and right context surface follow the target. Primary action and privacy note fit the desktop viewport. Responsive layout has no horizontal overflow at 390px.
+- **Colors/tokens:** white canvas, charcoal navigation, cobalt primary controls, pale-blue selection and muted amber warnings. Text contrast remains readable.
+- **Images/assets:** the source contains standard UI iconography, not photography. Phosphor library icons and a shield icon provide crisp assets; no custom SVG/CSS artwork substitutes were used. Fonts are bundled for network-independent rendering.
+- **Copy/content:** main task and method labels follow the selected design. A plausible-looking phone number was replaced with an explicitly unverified demo caller, and disclaimers accurately describe unconnected capabilities. All practice data is labeled.
+
+## Interaction and console checks
+
+Browser verified: method selection; confirmation disabled without an independent check and explicit permission; one-transcript dismissal; renewed high-risk alert after new speech; review-required excerpt export; nine-scenario navigation; timed digital-arrest scenario; high-risk modal; JSON download and report-history UI.
+
+Downloaded file verified separately: `kavach-practice-5e5399bf.json`, valid JSON, practice=true, score=100, excerpt absent by default, not-submitted disclaimer present. A first download wait timed out in browser tooling; the click had succeeded, and the downloaded file was independently located and checked. No application failure was found.
+
+Browser console: no error/warning entries during the final check. No microphone permission was granted during automated testing; actual audio recognition, language-pack availability and spoken warnings need a consenting hardware test. Offline shell installation is implemented but a browser network-disconnection test was not performed.
+
+## Implementation checklist
+
+- [x] Resolve and inspect selected visual
+- [x] Capture desktop implementation at matching dimensions
+- [x] Compare combined full and focused views
+- [x] Fix substantive drift and recapture
+- [x] Verify primary browser flows
+- [x] Check mobile width and dialog
+- [x] Check console errors
+- [x] Keep prototype labeled and scope limits visible
+
+Screenshots are included in the downloadable project package. The source repository contains this report; large evidence PNGs are distributed in the ZIP rather than deployed with the app.
