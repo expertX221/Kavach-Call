@@ -12,9 +12,9 @@ Speech recognition is a browser capability. On-device-only mode sets `processLoc
 
 The production service worker caches only the built static shell, bundled icons and fonts. It excludes API paths and never caches user input. First load and installation need a network. A new build uses a new cache name.
 
-## Why Neon is not required yet
+## Neon metadata, separated from family data
 
-The user has a Neon project named Kavach-Call. The demo does not benefit from uploading family questions or transcripts. No schema or cloud data is created by this prototype.
+The connected Kavach-Call preview branch has additive tables for reviewed campaign and hostname metadata. Family questions, contacts and transcripts remain outside this database. The current public API is read-only; no public report upload or authentication workflow is implemented.
 
 For a future authenticated reporting service, use the existing project, create an isolated development branch, and add versioned migrations. Start with minimal report metadata: authenticated reporter ID, campaign category, rule/model version, timestamp and an explicit consent record. Keep caller reputation private until independent corroboration and moderation. Introduce retention limits and an appeals path before publishing any number.
 

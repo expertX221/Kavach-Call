@@ -48,3 +48,13 @@ Browser console: no error/warning entries during the final check. No microphone 
 - [x] Keep prototype labeled and scope limits visible
 
 Screenshots are included in the downloadable project package. The source repository contains this report; large evidence PNGs are distributed in the ZIP rather than deployed with the app.
+
+
+## Protection tools upgrade — 23 October 2026
+Preserved the selected Clearline direction: white canvas, charcoal navigation, cobalt action color and spacious panels. Default verification screen remains consistent with the selected reference. New links, family readiness and weekly digest screens reuse existing typography and components.
+
+Browser evidence: deployed Chrome UI confirmed misleading URL actual-host display, reviewed Neon feed connection and honest zero-count Chennai digest, separate personal/practice counts, four explainers, and callback checklist changing the score from 0 to 25. The temporary test setting was restored. Desktop digest and family screenshots saved; 390px link-check screenshot confirms stacked cards and accessible two-row navigation with all eight destinations. DOM scroll width 375 <= viewport 390, no horizontal overflow. Report/registry data is excluded from offline cache.
+
+QR decoder passes a generated-image check outside the browser. Chrome extension file-access configuration blocked automated image upload; no browser permission was changed. Camera hardware and image chooser completion need manual testing. No fabricated accuracy claim or campaign count was added.
+
+Evidence: outputs/kavach-weekly-digest.png, outputs/kavach-protection-score.png and outputs/kavach-links-mobile.png (also packaged in docs/evidence in the ZIP).

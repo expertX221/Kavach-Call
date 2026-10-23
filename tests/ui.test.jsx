@@ -1,6 +1,6 @@
 import React from "react";
 import { describe, it, expect, vi } from "vitest";
-import { render, screen, fireEvent, within } from "@testing-library/react";
+import { render, screen, fireEvent, within, act } from "@testing-library/react";
 import { App } from "../src/App.jsx";
 
 describe("caller verification and privacy", () => {
@@ -178,4 +178,42 @@ describe("protection extensions", () => {
       screen.getByRole("tablist", { name: "Scam explainers" }),
     ).toBeInTheDocument();
   });
+});
+
+it("credits a completed lesson after playback has stopped", async () => {
+  vi.useFakeTimers();
+  try {
+    render(<App />);
+    fireEvent.click(
+      screen.getByRole("button", { name: "Practice studio", exact: true }),
+    );
+    fireEvent.click(
+      screen.getByRole("button", { name: /The delivery at your door/ }),
+    );
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(400);
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(2600);
+    });
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "Ask a family question or call back",
+        exact: true,
+      }),
+    );
+    expect(
+      JSON.parse(localStorage.getItem("kavach:progress"))[0].scenarioId,
+    ).toBe("delivery");
+    fireEvent.click(
+      screen.getByRole("button", { name: "Family circle", exact: true }),
+    );
+    expect(
+      screen.getByRole("progressbar", {
+        name: "Family protection setup score",
+      }),
+    ).toHaveAttribute("value", "25");
+  } finally {
+    vi.useRealTimers();
+  }
 });

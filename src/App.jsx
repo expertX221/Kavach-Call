@@ -126,8 +126,8 @@ export function App() {
     setAnswer(id);
     if (!quiz || id !== quiz.expected) return;
     const next = [
-      ...progress.filter((p) => p.scenarioId !== playId),
-      { scenarioId: playId, completedAt: new Date().toISOString() },
+      ...progress.filter((p) => p.scenarioId !== quiz.id),
+      { scenarioId: quiz.id, completedAt: new Date().toISOString() },
     ];
     setProgress(next);
     if (!writeLocal("progress", next))
@@ -1417,7 +1417,10 @@ export function App() {
               <p>
                 Local text scoring, explained signals, guided verification,
                 consent-based browser transcription, practice scenarios, local
-                contacts and downloadable report drafts.
+                contacts, downloadable report drafts, link/QR inspection, family
+                setup score and weekly explainers. Reviewed campaign and
+                hostname metadata is read from Neon; registration lookup is
+                optional.
               </p>
               <h3>What isn’t connected</h3>
               <p>
