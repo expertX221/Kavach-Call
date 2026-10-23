@@ -58,3 +58,7 @@ Browser evidence: deployed Chrome UI confirmed misleading URL actual-host displa
 QR decoder passes a generated-image check outside the browser. Chrome extension file-access configuration blocked automated image upload; no browser permission was changed. Camera hardware and image chooser completion need manual testing. No fabricated accuracy claim or campaign count was added.
 
 Evidence: outputs/kavach-weekly-digest.png, outputs/kavach-protection-score.png and outputs/kavach-links-mobile.png (also packaged in docs/evidence in the ZIP).
+
+
+## Production follow-up
+PR #1 is merged into main. Production app https://kavach-call.vercel.app/ is public and renders the selected UI. Neon production schema is prepared; its empty reviewed digest connected successfully. In-app-browser image chooser completed the generated payment QR upload end to end, showing demo@upi and INR 125. Evidence: docs/evidence/kavach-qr-production.png. This supersedes the earlier browser-upload limitation. Live camera remains dependent on device/browser permission; lifecycle denial, stalled-start timeout and late-stream cleanup are covered by automated tests.

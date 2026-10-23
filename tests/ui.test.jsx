@@ -1,4 +1,5 @@
 import React from "react";
+import LinksPage from "../src/features/LinksPage.jsx";
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent, within, act } from "@testing-library/react";
 import { App } from "../src/App.jsx";
@@ -216,4 +217,69 @@ it("credits a completed lesson after playback has stopped", async () => {
   } finally {
     vi.useRealTimers();
   }
+});
+
+describe("camera lifecycle", () => {
+  const intelligence = { status: "unavailable", reputation: [], campaigns: [] };
+  it("explains permission denial and retains image fallback", async () => {
+    vi.stubGlobal("navigator", {
+      mediaDevices: {
+        getUserMedia: vi.fn().mockRejectedValue(new Error("denied")),
+      },
+    });
+    try {
+      render(<LinksPage intelligence={intelligence} />);
+      fireEvent.click(screen.getByRole("button", { name: "Start camera" }));
+      expect(
+        await screen.findByText(/Camera could not start/),
+      ).toBeInTheDocument();
+      expect(screen.getByLabelText("Upload QR image")).toBeEnabled();
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+  it("times out stalled permissions and stops a stream granted later", async () => {
+    vi.useFakeTimers();
+    let resolve;
+    const stop = vi.fn();
+    const request = vi.fn(() => new Promise((r) => (resolve = r)));
+    vi.stubGlobal("navigator", { mediaDevices: { getUserMedia: request } });
+    try {
+      render(<LinksPage intelligence={intelligence} />);
+      fireEvent.click(screen.getByRole("button", { name: "Start camera" }));
+      expect(request.mock.calls[0][0].audio).toBe(false);
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(12000);
+      });
+      expect(screen.getByText(/No camera frames arrived/)).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: "Start camera" }),
+      ).toBeEnabled();
+      await act(async () => {
+        resolve({ getTracks: () => [{ stop }] });
+      });
+      expect(stop).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.useRealTimers();
+      vi.unstubAllGlobals();
+    }
+  });
+  it("stops a late camera grant after leaving the page", async () => {
+    let resolve;
+    const stop = vi.fn();
+    vi.stubGlobal("navigator", {
+      mediaDevices: { getUserMedia: () => new Promise((r) => (resolve = r)) },
+    });
+    try {
+      const view = render(<LinksPage intelligence={intelligence} />);
+      fireEvent.click(screen.getByRole("button", { name: "Start camera" }));
+      view.unmount();
+      await act(async () => {
+        resolve({ getTracks: () => [{ stop }] });
+      });
+      expect(stop).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
 });

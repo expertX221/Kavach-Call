@@ -21,6 +21,7 @@ export default function LinksPage({ intelligence }) {
   const video = useRef(null),
     stream = useRef(null),
     timer = useRef(null),
+    startup = useRef(null),
     epoch = useRef(0),
     lookup = useRef(null);
   const result = useMemo(
@@ -37,6 +38,7 @@ export default function LinksPage({ intelligence }) {
   function stopCamera() {
     epoch.current++;
     clearInterval(timer.current);
+    clearTimeout(startup.current);
     timer.current = null;
     stream.current?.getTracks().forEach((t) => t.stop());
     stream.current = null;
@@ -56,6 +58,7 @@ export default function LinksPage({ intelligence }) {
     () => () => {
       epoch.current++;
       clearInterval(timer.current);
+      clearTimeout(startup.current);
       stream.current?.getTracks().forEach((t) => t.stop());
       lookup.current?.abort();
     },
@@ -125,6 +128,13 @@ export default function LinksPage({ intelligence }) {
       return;
     }
     setCamera("starting");
+    startup.current = setTimeout(() => {
+      if (token !== epoch.current) return;
+      stopCamera();
+      setError(
+        "No camera frames arrived. Allow camera access in your browser, or upload a QR image instead.",
+      );
+    }, 12000);
     try {
       const media = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: { ideal: "environment" }, width: { ideal: 640 } },
@@ -145,6 +155,7 @@ export default function LinksPage({ intelligence }) {
       if (token !== epoch.current) return;
       timer.current = setInterval(() => {
         if (token !== epoch.current || !video.current?.videoWidth) return;
+        clearTimeout(startup.current);
         const v = video.current;
         const scale = Math.min(1, 640 / Math.max(v.videoWidth, v.videoHeight));
         canvas.width = Math.round(v.videoWidth * scale);
